@@ -27,7 +27,7 @@
 
 @implementation PBGitCommitController
 
-@synthesize status, index, busy, unfuddleTaskResults;
+@synthesize status, index, busy, unfuddleTaskResults, githubTaskResults;
 
 - (id)initWithRepository:(PBGitRepository *)theRepository superController:(PBGitWindowController *)controller
 {
@@ -255,6 +255,74 @@
 	self.status = @"Ready";
 }
 
+//================================================ GITHUB INTEGRATION =================================================\\
+//
+// This method is responsible for pushing local commits 
+// to a remote upstream repository hosted by github.
+// 
+// This functionality becomes available once a user 
+// adds the "Push to github" button to their toolbar.
+// 
+// This method should only be called if there are local 
+// commits ready for remote push. Furthermore, users should 
+// be warned that their commits will be pushed to the master. 
+// Will change once ability is added to set push "destination".
+//
+- (void) pushToGithub:(id)sender
+{
+	NSString *currentWorkingDir = [ [NSString alloc] initWithFormat: @"%@", [repository workingDirectory] ];
+	
+	NSTask *github_git = [ [[NSTask alloc] init] autorelease ];
+	NSString *pathToGit = [ [NSString alloc] initWithFormat: @"/usr/local/git/bin/git" ];
+	NSMutableArray *args = [ NSMutableArray array ];
+	NSNotificationCenter *nc = [ NSNotificationCenter defaultCenter ];
+	
+	[ args addObject: @"push" ];
+	[ args addObject: @"origin" ];
+	[ args addObject: @"master" ];
+	//	[ args addObject: @"push origin master" ]; // used this to simulate failure!!
+	
+	[ nc addObserver: self selector: @selector(pushToGithubComplete:) name: NSTaskDidTerminateNotification object: github_git ];
+	
+	[ github_git setCurrentDirectoryPath: currentWorkingDir ];
+	[ github_git setLaunchPath: pathToGit ];
+	[ github_git setArguments: args ];
+	[ github_git launch ];
+	
+	self.busy++;
+	self.status = @"Pushing commits to GitHub";
+}
 
+//
+// This method is responsible for handling the notification sent 
+// by the NSTask created by the pushToGithub() method.
+// 
+// Ideally, the user should be notified of the status either by 
+// a collapsible property sheet/pane or an alert.
+//
+- (void) pushToGithubComplete:( NSNotification * ) notification
+{
+	int GIT_SUCCESS_VALUE = 0;
+	
+	int gitTaskStatus = [ [notification object] terminationStatus ];
+	
+	if (gitTaskStatus == GIT_SUCCESS_VALUE)
+	{
+		githubTaskResults = @"Pushed commits to GitHub successfully!";
+		NSBeginInformationalAlertSheet( @"GitHub Status", nil, nil, nil, [ commitMessageView window ], self, nil, nil, NULL, githubTaskResults);
+	}
+	else
+		
+		
+	{
+		githubTaskResults = @"Push to GitHub failed unexpectedly. Please try again.";
+		NSBeginCriticalAlertSheet( @"GitHub Status", nil, nil, nil, [ commitMessageView window ], self, nil, nil, NULL, githubTaskResults);
+		
+	}
+	
+	
+	self.busy--;
+	self.status = @"Ready";
+}
 
 @end

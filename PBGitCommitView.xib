@@ -784,6 +784,7 @@
 					<object class="NSArray" key="dict.sortedKeys">
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<string>1E431E79-1591-49E7-9E17-49497CA4622A</string>
+						<string>9944DDC6-A746-4466-998F-CC5253F8DA23</string>
 						<string>ED58F2FD-E7BB-476F-894E-1E629517E95F</string>
 						<string>NSToolbarFlexibleSpaceItem</string>
 						<string>NSToolbarSeparatorItem</string>
@@ -848,6 +849,48 @@
 							<bool key="NSToolbarIsUserRemovable">YES</bool>
 							<int key="NSToolbarItemVisibilityPriority">0</int>
 						</object>
+						<object class="NSToolbarItem" id="360702825">
+							<object class="NSMutableString" key="NSToolbarItemIdentifier">
+								<characters key="NS.bytes">9944DDC6-A746-4466-998F-CC5253F8DA23</characters>
+							</object>
+							<string key="NSToolbarItemLabel">Push to GitHub</string>
+							<string key="NSToolbarItemPaletteLabel">Push to GitHub</string>
+							<nil key="NSToolbarItemToolTip"/>
+							<object class="NSButton" key="NSToolbarItemView" id="199685581">
+								<reference key="NSNextResponder"/>
+								<int key="NSvFlags">268</int>
+								<string key="NSFrame">{{20, 14}, {48, 48}}</string>
+								<reference key="NSSuperview"/>
+								<bool key="NSEnabled">YES</bool>
+								<object class="NSButtonCell" key="NSCell" id="280052508">
+									<int key="NSCellFlags">67239424</int>
+									<int key="NSCellFlags2">134217728</int>
+									<string key="NSContents"/>
+									<reference key="NSSupport" ref="554612341"/>
+									<reference key="NSControlView" ref="199685581"/>
+									<int key="NSButtonFlags">-2041822977</int>
+									<int key="NSButtonFlags2">134</int>
+									<object class="NSCustomResource" key="NSNormalImage" id="695699742">
+										<string key="NSClassName">NSImage</string>
+										<string key="NSResourceName">ico_github_octocat</string>
+									</object>
+									<string key="NSAlternateContents"/>
+									<string key="NSKeyEquivalent"/>
+									<int key="NSPeriodicDelay">400</int>
+									<int key="NSPeriodicInterval">75</int>
+								</object>
+							</object>
+							<reference key="NSToolbarItemImage" ref="695699742"/>
+							<nil key="NSToolbarItemTarget"/>
+							<nil key="NSToolbarItemAction"/>
+							<string key="NSToolbarItemMinSize">{48, 48}</string>
+							<string key="NSToolbarItemMaxSize">{48, 48}</string>
+							<bool key="NSToolbarItemEnabled">YES</bool>
+							<bool key="NSToolbarItemAutovalidates">YES</bool>
+							<int key="NSToolbarItemTag">0</int>
+							<bool key="NSToolbarIsUserRemovable">YES</bool>
+							<int key="NSToolbarItemVisibilityPriority">0</int>
+						</object>
 						<object class="NSToolbarItem" id="1040090157">
 							<object class="NSMutableString" key="NSToolbarItemIdentifier">
 								<characters key="NS.bytes">ED58F2FD-E7BB-476F-894E-1E629517E95F</characters>
@@ -869,7 +912,7 @@
 									<reference key="NSControlView" ref="638578804"/>
 									<int key="NSButtonFlags">-2041822977</int>
 									<int key="NSButtonFlags2">134</int>
-									<object class="NSCustomResource" key="NSNormalImage" id="141261383">
+									<object class="NSCustomResource" key="NSNormalImage" id="355586385">
 										<string key="NSClassName">NSImage</string>
 										<string key="NSResourceName">ico_unfuddle</string>
 									</object>
@@ -883,7 +926,7 @@
 									</object>
 								</object>
 							</object>
-							<reference key="NSToolbarItemImage" ref="141261383"/>
+							<reference key="NSToolbarItemImage" ref="355586385"/>
 							<nil key="NSToolbarItemTarget"/>
 							<nil key="NSToolbarItemAction"/>
 							<string key="NSToolbarItemMinSize">{48, 48}</string>
@@ -956,12 +999,13 @@
 						</object>
 					</object>
 				</object>
-				<object class="NSArray" key="NSToolbarIBAllowedItems">
+				<object class="NSMutableArray" key="NSToolbarIBAllowedItems">
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<reference ref="271300712"/>
 					<reference ref="354340151"/>
 					<reference ref="361350904"/>
 					<reference ref="1040090157"/>
+					<reference ref="360702825"/>
 				</object>
 				<object class="NSMutableArray" key="NSToolbarIBDefaultItems">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1307,6 +1351,14 @@
 					</object>
 					<int key="connectionID">289</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">pushToGithub:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="199685581"/>
+					</object>
+					<int key="connectionID">296</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -1582,6 +1634,7 @@
 							<reference ref="354340151"/>
 							<reference ref="361350904"/>
 							<reference ref="1040090157"/>
+							<reference ref="360702825"/>
 						</object>
 						<reference key="parent" ref="0"/>
 						<string key="objectName">Commit Toolbar</string>
@@ -1675,6 +1728,29 @@
 						<reference key="object" ref="164056143"/>
 						<reference key="parent" ref="638578804"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">295</int>
+						<reference key="object" ref="360702825"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="199685581"/>
+						</object>
+						<reference key="parent" ref="570289088"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">293</int>
+						<reference key="object" ref="199685581"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="280052508"/>
+						</object>
+						<reference key="parent" ref="360702825"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">294</int>
+						<reference key="object" ref="280052508"/>
+						<reference key="parent" ref="199685581"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -1721,6 +1797,8 @@
 					<string>284.IBPluginDependency</string>
 					<string>286.IBPluginDependency</string>
 					<string>287.IBPluginDependency</string>
+					<string>293.IBPluginDependency</string>
+					<string>294.IBPluginDependency</string>
 					<string>42.IBPluginDependency</string>
 					<string>45.IBPluginDependency</string>
 					<string>46.IBPluginDependency</string>
@@ -1782,6 +1860,8 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>PBFileChangesTableView</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1810,7 +1890,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">292</int>
+			<int key="maxID">296</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -1839,12 +1919,14 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>commit:</string>
+							<string>pushToGithub:</string>
 							<string>pushToUnfuddle:</string>
 							<string>refresh:</string>
 							<string>signOff:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>

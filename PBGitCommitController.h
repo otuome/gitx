@@ -32,15 +32,18 @@
 	BOOL busy;
 	
 	NSString *unfuddleTaskResults;
+	NSString *githubTaskResults;
 }
 
 @property(copy) NSString *status;
 @property(readonly) PBGitIndex *index;
 @property(assign) BOOL busy;
 @property (nonatomic, retain) NSString *unfuddleTaskResults;
+@property (nonatomic, retain) NSString *githubTaskResults;
 
 - (IBAction) refresh:(id) sender;
 - (IBAction) commit:(id) sender;
 - (IBAction)signOff:(id)sender;
 - (IBAction) pushToUnfuddle:(id)sender;
+- (IBAction) pushToGithub:(id)sender;
 @end
