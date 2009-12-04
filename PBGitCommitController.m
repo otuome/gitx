@@ -5,6 +5,9 @@
 //  Created by Pieter de Bie on 19-09-08.
 //  Copyright 2008 __MyCompanyName__. All rights reserved.
 //
+//	Modified by Hasan Otuome on 12-04-09:
+//	- added Unfuddle integration
+//
 
 #import "PBGitCommitController.h"
 #import "NSFileHandleExt.h"
@@ -24,7 +27,7 @@
 
 @implementation PBGitCommitController
 
-@synthesize status, index, busy;
+@synthesize status, index, busy, unfuddleTaskResults;
 
 - (id)initWithRepository:(PBGitRepository *)theRepository superController:(PBGitWindowController *)controller
 {
@@ -183,5 +186,75 @@
 {
 	[[repository windowController] showMessageSheet:@"Index operation failed" infoText:[[notification userInfo] objectForKey:@"description"]];
 }
+
+//================================================ UNFUDDLE INTEGRATION =================================================\\
+//
+// This method is responsible for pushing local commits 
+// to a remote upstream repository hosted by Unfuddle.
+// 
+// This functionality becomes available once a user 
+// adds the "Push to Unfuddle" button to their toolbar.
+// 
+// This method should only be called if there are local 
+// commits ready for remote push.
+//
+- (void) pushToUnfuddle:(id)sender
+{
+	NSString *currentWorkingDir = [ [NSString alloc] initWithFormat: @"%@", [repository workingDirectory] ];
+	
+	NSTask *uf_git = [ [[NSTask alloc] init] autorelease ];
+	NSString *pathToGit = [ [NSString alloc] initWithFormat: @"/usr/local/git/bin/git" ];
+	NSMutableArray *args = [ NSMutableArray array ];
+	NSNotificationCenter *nc = [ NSNotificationCenter defaultCenter ];
+	
+	[ args addObject: @"push" ];
+	[ args addObject: @"unfuddle" ];
+	[ args addObject: @"master" ];
+//	[ args addObject: @"push unfuddle master" ]; // used this to simulate failure!!
+	
+	[ nc addObserver: self selector: @selector(pushToUnfuddleComplete:) name: NSTaskDidTerminateNotification object: uf_git ];
+	
+	[ uf_git setCurrentDirectoryPath: currentWorkingDir ];
+	[ uf_git setLaunchPath: pathToGit ];
+	[ uf_git setArguments: args ];
+	[ uf_git launch ];
+	
+	self.busy++;
+	self.status = @"Pushing commits to Unfuddle";
+}
+
+//
+// This method is responsible for handling the notification sent 
+// by the NSTask created by the pushToUnfuddle() method.
+// 
+// Ideally, the user should be notified of the status either by 
+// a collapsible property sheet/pane or an alert.
+//
+- (void) pushToUnfuddleComplete:( NSNotification * ) notification
+{
+	int GIT_SUCCESS_VALUE = 0;
+	
+	int gitTaskStatus = [ [notification object] terminationStatus ];
+	
+	if (gitTaskStatus == GIT_SUCCESS_VALUE)
+	{
+		unfuddleTaskResults = @"Pushed commits to Unfuddle successfully!";
+		NSBeginInformationalAlertSheet( @"Unfuddle Status", nil, nil, nil, [ commitMessageView window ], self, nil, nil, NULL, unfuddleTaskResults);
+	}
+	else
+
+
+	{
+		unfuddleTaskResults = @"Push to Unfuddle failed unexpectedly. Please try again.";
+		NSBeginCriticalAlertSheet( @"Unfuddle Status", nil, nil, nil, [ commitMessageView window ], self, nil, nil, NULL, unfuddleTaskResults);
+
+	}
+
+	
+	self.busy--;
+	self.status = @"Ready";
+}
+
+
 
 @end

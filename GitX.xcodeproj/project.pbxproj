@@ -43,6 +43,7 @@
 		91B103CC0E898EC300C84364 /* PBIconAndTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 91B103CB0E898EC300C84364 /* PBIconAndTextCell.m */; };
 		93CB42C20EAB7B2200530609 /* PBGitDefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = 93CB42C10EAB7B2200530609 /* PBGitDefaults.m */; };
 		93F7857F0EA3ABF100C1F443 /* PBCommitMessageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 93F7857E0EA3ABF100C1F443 /* PBCommitMessageView.m */; };
+		9F5C487610C9A36200AA2C07 /* ico_unfuddle.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F5C487410C9A36200AA2C07 /* ico_unfuddle.png */; };
 		D26DC6450E782C9000C777B2 /* gitx.icns in Resources */ = {isa = PBXBuildFile; fileRef = D26DC6440E782C9000C777B2 /* gitx.icns */; };
 		EB2A734A0FEE3F09006601CF /* PBCollapsibleSplitView.m in Sources */ = {isa = PBXBuildFile; fileRef = EB2A73490FEE3F09006601CF /* PBCollapsibleSplitView.m */; };
 		F50A411F0EBB874C00208746 /* mainSplitterBar.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F50A411D0EBB874C00208746 /* mainSplitterBar.tiff */; };
@@ -207,6 +208,7 @@
 		93F7857D0EA3ABF100C1F443 /* PBCommitMessageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCommitMessageView.h; sourceTree = "<group>"; };
 		93F7857E0EA3ABF100C1F443 /* PBCommitMessageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCommitMessageView.m; sourceTree = "<group>"; };
 		93FCCBA80EA8AF450061B02B /* PBGitConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBGitConfig.m; sourceTree = "<group>"; };
+		9F5C487410C9A36200AA2C07 /* ico_unfuddle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ico_unfuddle.png; path = Images/ico_unfuddle.png; sourceTree = "<group>"; };
 		D26DC6440E782C9000C777B2 /* gitx.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = gitx.icns; sourceTree = "<group>"; };
 		EB2A73480FEE3F09006601CF /* PBCollapsibleSplitView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCollapsibleSplitView.h; sourceTree = "<group>"; };
 		EB2A73490FEE3F09006601CF /* PBCollapsibleSplitView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCollapsibleSplitView.m; sourceTree = "<group>"; };
@@ -419,6 +421,7 @@
 			children = (
 				3BC07F4A0ED5A5C5009A7768 /* HistoryViewTemplate.png */,
 				3BC07F4B0ED5A5C5009A7768 /* CommitViewTemplate.png */,
+				9F5C487410C9A36200AA2C07 /* ico_unfuddle.png */,
 				F56ADDD70ED19F9E002AC78F /* AddBranchTemplate.png */,
 				F56ADDD80ED19F9E002AC78F /* AddLabelTemplate.png */,
 				056438B60ED0C40B00985397 /* DetailViewTemplate.png */,
@@ -819,6 +822,7 @@
 				47DBDB6A0E94EF6500671A1E /* Preferences.xib in Resources */,
 				47DBDBB10E94F6CA00671A1E /* Updates.png in Resources */,
 				F569AE930F2CBD7C00C2FFA7 /* Credits.html in Resources */,
+				9F5C487610C9A36200AA2C07 /* ico_unfuddle.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

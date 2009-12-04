@@ -5,6 +5,11 @@
 //  Created by Pieter de Bie on 19-09-08.
 //  Copyright 2008 __MyCompanyName__. All rights reserved.
 //
+//	Modified by Hasan Otuome on 12-04-09:
+//	- added Unfuddle toolbar item
+//
+//	Modified by Hasan Otuome on 04-12-09:
+//	- added github toolbar item 
 
 #import <Cocoa/Cocoa.h>
 #import "PBViewController.h"
@@ -25,13 +30,17 @@
 
 	NSString *status;
 	BOOL busy;
+	
+	NSString *unfuddleTaskResults;
 }
 
 @property(copy) NSString *status;
 @property(readonly) PBGitIndex *index;
 @property(assign) BOOL busy;
+@property (nonatomic, retain) NSString *unfuddleTaskResults;
 
 - (IBAction) refresh:(id) sender;
 - (IBAction) commit:(id) sender;
 - (IBAction)signOff:(id)sender;
+- (IBAction) pushToUnfuddle:(id)sender;
 @end
