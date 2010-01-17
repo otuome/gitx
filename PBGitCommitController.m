@@ -8,12 +8,23 @@
 //	Modified by Hasan Otuome on 12-04-09:
 //	- added Unfuddle integration
 //
+//	Modified by Hasan Otuome on 04-12-09:
+//	- added github toolbar item 
+//
+//	Modified by Hasan Otuome on 16-01-10:
+//	- removed Unfuddle and github buttons
+//	- added remote selector 
 
 #import "PBGitCommitController.h"
 #import "NSFileHandleExt.h"
 #import "PBChangedFile.h"
 #import "PBWebChangesController.h"
 #import "PBGitIndex.h"
+
+#define ASSEMBLA	= "Assembla"
+#define GITHUB		= "GitHub"
+#define RH			= "RepositoryHosting"
+#define UNFUDDLE	= "Unfuddle"
 
 @interface PBGitCommitController ()
 - (void)refreshFinished:(NSNotification *)notification;
@@ -27,7 +38,7 @@
 
 @implementation PBGitCommitController
 
-@synthesize status, index, busy, unfuddleTaskResults, githubTaskResults;
+@synthesize status, index, busy, selectedRemote, unfuddleTaskResults, githubTaskResults, repositoryHostingTaskResults;
 
 - (id)initWithRepository:(PBGitRepository *)theRepository superController:(PBGitWindowController *)controller
 {
@@ -186,7 +197,25 @@
 {
 	[[repository windowController] showMessageSheet:@"Index operation failed" infoText:[[notification userInfo] objectForKey:@"description"]];
 }
-
+//================================================ REMOTE PUSH INTEGRATION =================================================\\
+//
+// These methods govern pushing local commits 
+// to a remote upstream repository hosted by X host.
+- (void) updateSelectedRemote:(id)sender
+{
+	selectedRemote = [[sender selectedItem] title];
+}
+- (void) pushToSelectedRemote:(id)sender
+{
+	if (selectedRemote == nil) 
+	{
+		selectedRemote = [[remoteSelector selectedItem] title];
+	}
+	
+	if ([selectedRemote isEqualToString: @"GitHub"])[ self doPushToGithub ];
+	if ([selectedRemote isEqualToString: @"RepositoryHosting"]) [ self doPushToRepositoryHosting ];
+	if ([selectedRemote isEqualToString: @"Unfuddle"]) [ self doPushToUnfuddle ];
+}
 //================================================ UNFUDDLE INTEGRATION =================================================\\
 //
 // This method is responsible for pushing local commits 
@@ -223,6 +252,30 @@
 	self.status = @"Pushing commits to Unfuddle";
 }
 
+- (void) doPushToUnfuddle
+{
+	NSString *currentWorkingDir = [ [NSString alloc] initWithFormat: @"%@", [repository workingDirectory] ];
+	
+	NSTask *uf_git = [ [[NSTask alloc] init] autorelease ];
+	NSString *pathToGit = [ [NSString alloc] initWithFormat: @"/usr/local/git/bin/git" ];
+	NSMutableArray *args = [ NSMutableArray array ];
+	NSNotificationCenter *nc = [ NSNotificationCenter defaultCenter ];
+	
+	[ args addObject: @"push" ];
+	[ args addObject: @"unfuddle" ];
+	[ args addObject: @"master" ];
+	
+	[ nc addObserver: self selector: @selector(pushToUnfuddleComplete:) name: NSTaskDidTerminateNotification object: uf_git ];
+	
+	[ uf_git setCurrentDirectoryPath: currentWorkingDir ];
+	[ uf_git setLaunchPath: pathToGit ];
+	[ uf_git setArguments: args ];
+	[ uf_git launch ];
+	
+	self.busy++;
+	self.status = @"Pushing commits to Unfuddle";
+}
+
 //
 // This method is responsible for handling the notification sent 
 // by the NSTask created by the pushToUnfuddle() method.
@@ -242,14 +295,10 @@
 		NSBeginInformationalAlertSheet( @"Unfuddle Status", nil, nil, nil, [ commitMessageView window ], self, nil, nil, NULL, unfuddleTaskResults);
 	}
 	else
-
-
 	{
 		unfuddleTaskResults = @"Push to Unfuddle failed unexpectedly. Please try again.";
 		NSBeginCriticalAlertSheet( @"Unfuddle Status", nil, nil, nil, [ commitMessageView window ], self, nil, nil, NULL, unfuddleTaskResults);
-
 	}
-
 	
 	self.busy--;
 	self.status = @"Ready";
@@ -293,6 +342,31 @@
 	self.status = @"Pushing commits to GitHub";
 }
 
+- (void) doPushToGithub
+{
+	NSString *currentWorkingDir = [ [NSString alloc] initWithFormat: @"%@", [repository workingDirectory] ];
+	
+	NSTask *github_git = [ [[NSTask alloc] init] autorelease ];
+	NSString *pathToGit = [ [NSString alloc] initWithFormat: @"/usr/local/git/bin/git" ];
+	NSMutableArray *args = [ NSMutableArray array ];
+	NSNotificationCenter *nc = [ NSNotificationCenter defaultCenter ];
+	
+	[ args addObject: @"push" ];
+	[ args addObject: @"origin" ];
+	[ args addObject: @"master" ];
+	//	[ args addObject: @"push origin master" ]; // used this to simulate failure!!
+	
+	[ nc addObserver: self selector: @selector(pushToGithubComplete:) name: NSTaskDidTerminateNotification object: github_git ];
+	
+	[ github_git setCurrentDirectoryPath: currentWorkingDir ];
+	[ github_git setLaunchPath: pathToGit ];
+	[ github_git setArguments: args ];
+	[ github_git launch ];
+	
+	self.busy++;
+	self.status = @"Pushing commits to GitHub";
+}
+
 //
 // This method is responsible for handling the notification sent 
 // by the NSTask created by the pushToGithub() method.
@@ -312,14 +386,101 @@
 		NSBeginInformationalAlertSheet( @"GitHub Status", nil, nil, nil, [ commitMessageView window ], self, nil, nil, NULL, githubTaskResults);
 	}
 	else
-		
-		
 	{
 		githubTaskResults = @"Push to GitHub failed unexpectedly. Please try again.";
 		NSBeginCriticalAlertSheet( @"GitHub Status", nil, nil, nil, [ commitMessageView window ], self, nil, nil, NULL, githubTaskResults);
-		
 	}
 	
+	self.busy--;
+	self.status = @"Ready";
+}
+
+//================================================ REPOSITORY HOSTING INTEGRATION =================================================\\
+//
+// This method is responsible for pushing local commits 
+// to a remote upstream repository hosted by repositoryhosting.com.
+// 
+// This functionality becomes available once a user 
+// adds the "Push to RH" button to their toolbar.
+// 
+// This method should only be called if there are local 
+// commits ready for remote push. Furthermore, users should 
+// be warned that their commits will be pushed to the master. 
+// Will change once ability is added to set push "destination".
+//
+- (void) pushToRepositoryHosting:(id)sender
+{
+	NSString *currentWorkingDir = [ [NSString alloc] initWithFormat: @"%@", [repository workingDirectory] ];
+	
+	NSTask *rh_git = [ [[NSTask alloc] init] autorelease ];
+	NSString *pathToGit = [ [NSString alloc] initWithFormat: @"/usr/local/git/bin/git" ];
+	NSMutableArray *args = [ NSMutableArray array ];
+	NSNotificationCenter *nc = [ NSNotificationCenter defaultCenter ];
+	
+	[ args addObject: @"push" ];
+	[ args addObject: @"origin" ];
+	[ args addObject: @"master" ];
+	//	[ args addObject: @"push origin master" ]; // used this to simulate failure!!
+	
+	[ nc addObserver: self selector: @selector(pushToRepositoryHostingComplete:) name: NSTaskDidTerminateNotification object: rh_git ];
+	
+	[ rh_git setCurrentDirectoryPath: currentWorkingDir ];
+	[ rh_git setLaunchPath: pathToGit ];
+	[ rh_git setArguments: args ];
+	[ rh_git launch ];
+	
+	self.busy++;
+	self.status = @"Pushing commits to RepositoryHosting";
+}
+
+- (void) doPushToRepositoryHosting
+{
+	NSString *currentWorkingDir = [ [NSString alloc] initWithFormat: @"%@", [repository workingDirectory] ];
+	
+	NSTask *rh_git = [ [[NSTask alloc] init] autorelease ];
+	NSString *pathToGit = [ [NSString alloc] initWithFormat: @"/usr/local/git/bin/git" ];
+	NSMutableArray *args = [ NSMutableArray array ];
+	NSNotificationCenter *nc = [ NSNotificationCenter defaultCenter ];
+	
+	[ args addObject: @"push" ];
+	[ args addObject: @"origin" ];
+	[ args addObject: @"master" ];
+	//	[ args addObject: @"push origin master" ]; // used this to simulate failure!!
+	
+	[ nc addObserver: self selector: @selector(pushToRepositoryHostingComplete:) name: NSTaskDidTerminateNotification object: rh_git ];
+	
+	[ rh_git setCurrentDirectoryPath: currentWorkingDir ];
+	[ rh_git setLaunchPath: pathToGit ];
+	[ rh_git setArguments: args ];
+	[ rh_git launch ];
+	
+	self.busy++;
+	self.status = @"Pushing commits to RepositoryHosting";
+}
+
+//
+// This method is responsible for handling the notification sent 
+// by the NSTask created by the pushToRepositoryHosting() method.
+// 
+// Ideally, the user should be notified of the status either by 
+// a collapsible property sheet/pane or an alert.
+//
+- (void) pushToRepositoryHostingComplete:( NSNotification * ) notification
+{
+	int GIT_SUCCESS_VALUE = 0;
+	
+	int gitTaskStatus = [ [notification object] terminationStatus ];
+	
+	if (gitTaskStatus == GIT_SUCCESS_VALUE)
+	{
+		repositoryHostingTaskResults = @"Pushed commits to RepositoryHosting successfully!";
+		NSBeginInformationalAlertSheet( @"RepositoryHosting Status", nil, nil, nil, [ commitMessageView window ], self, nil, nil, NULL, repositoryHostingTaskResults);
+	}
+	else
+	{
+		repositoryHostingTaskResults = @"Push to RepositoryHosting failed unexpectedly. Please try again.";
+		NSBeginCriticalAlertSheet( @"RepositoryHosting Status", nil, nil, nil, [ commitMessageView window ], self, nil, nil, NULL, repositoryHostingTaskResults);
+	}
 	
 	self.busy--;
 	self.status = @"Ready";

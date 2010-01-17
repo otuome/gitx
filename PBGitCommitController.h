@@ -10,6 +10,10 @@
 //
 //	Modified by Hasan Otuome on 04-12-09:
 //	- added github toolbar item 
+//
+//	Modified by Hasan Otuome on 16-01-10:
+//	- removed Unfuddle and github buttons
+//	- added remote selector 
 
 #import <Cocoa/Cocoa.h>
 #import "PBViewController.h"
@@ -27,12 +31,17 @@
 
 	IBOutlet PBGitIndexController *indexController;
 	IBOutlet PBWebChangesController *webController;
-
+	
+	IBOutlet NSPopUpButton *remoteSelector;
+	
+	NSString *selectedRemote;
+	
 	NSString *status;
 	BOOL busy;
 	
 	NSString *unfuddleTaskResults;
 	NSString *githubTaskResults;
+	NSString *repositoryHostingTaskResults;
 }
 
 @property(copy) NSString *status;
@@ -40,10 +49,14 @@
 @property(assign) BOOL busy;
 @property (nonatomic, retain) NSString *unfuddleTaskResults;
 @property (nonatomic, retain) NSString *githubTaskResults;
+@property (nonatomic, retain) NSString *repositoryHostingTaskResults;
+@property (nonatomic, retain) NSString *selectedRemote;
 
 - (IBAction) refresh:(id) sender;
 - (IBAction) commit:(id) sender;
 - (IBAction)signOff:(id)sender;
+- (IBAction) updateSelectedRemote:(id)sender;
+- (IBAction) pushToSelectedRemote:(id)sender;
 - (IBAction) pushToUnfuddle:(id)sender;
 - (IBAction) pushToGithub:(id)sender;
 @end
